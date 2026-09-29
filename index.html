@@ -11,204 +11,182 @@
   <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
   <title>دفعات الطلاب</title>
   <style>
-    :root{--bg:#f5f7fb;--card:#fff;--text:#172033;--muted:#6b7280;--brand:#0f766e;--brand2:#115e59;--danger:#b91c1c;--warn:#b45309;--ok:#15803d;--line:#e5e7eb;--shadow:0 10px 30px rgba(15,23,42,.08)}
-    *{box-sizing:border-box} body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Tahoma,Arial,sans-serif;background:var(--bg);color:var(--text)}
-    .app{max-width:820px;margin:0 auto;min-height:100vh;padding:calc(16px + env(safe-area-inset-top)) 14px calc(90px + env(safe-area-inset-bottom))}
-    header{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px}.title{font-size:28px;font-weight:800}.sub{font-size:13px;color:var(--muted)}
-    button{font:inherit}.btn{border:0;border-radius:14px;padding:12px 15px;cursor:pointer}.btn-primary{background:var(--brand);color:#fff;font-weight:700}.btn-primary:active{background:var(--brand2)}.btn-ghost{background:#eef2f7;color:var(--text)}.btn-danger{background:#fee2e2;color:var(--danger)}
-    .toolbar{display:grid;grid-template-columns:1fr auto;gap:10px;margin-bottom:12px}.search{width:100%;border:1px solid var(--line);border-radius:14px;background:#fff;padding:13px 14px;font-size:16px;outline:none}.search:focus{border-color:#99f6e4;box-shadow:0 0 0 3px #ccfbf1}
-    .summary{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}.stat{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px;text-align:center;box-shadow:var(--shadow)}.stat b{display:block;font-size:22px}.stat span{font-size:12px;color:var(--muted)}
-    .list{display:grid;gap:10px}.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px;box-shadow:var(--shadow)}.row{display:flex;align-items:center;justify-content:space-between;gap:10px}.student-name{font-weight:800;font-size:18px}.amount{font-weight:700}.meta{margin-top:8px;display:grid;gap:5px;color:var(--muted);font-size:14px}.status{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:800;border-radius:999px;padding:7px 10px;white-space:nowrap}.status.ok{background:#dcfce7;color:var(--ok)}.status.warn{background:#ffedd5;color:var(--warn)}.status.danger{background:#fee2e2;color:var(--danger)}
-    .actions{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}.actions .btn{padding:9px 11px;border-radius:11px;font-size:14px}
-    .empty{background:#fff;border:1px dashed #cbd5e1;border-radius:18px;padding:36px 18px;text-align:center;color:var(--muted)}
-    .fab{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(18px + env(safe-area-inset-bottom));width:min(790px,calc(100% - 28px));display:flex;gap:8px;z-index:4}.fab .btn{flex:1;box-shadow:0 10px 28px rgba(15,118,110,.28)}
-    dialog{border:0;border-radius:22px;padding:0;width:min(560px,calc(100% - 26px));box-shadow:0 24px 70px rgba(0,0,0,.24)}dialog::backdrop{background:rgba(15,23,42,.45)}.modal{padding:18px}.modal h2{margin:0 0 14px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.field{display:grid;gap:6px}.field.full{grid-column:1/-1}.field label{font-size:13px;color:var(--muted);font-weight:700}.field input,.field select{border:1px solid var(--line);border-radius:12px;padding:12px;font-size:16px;width:100%;background:#fff}.modal-actions{display:flex;gap:8px;justify-content:flex-start;margin-top:16px}.history{margin-top:14px;border-top:1px solid var(--line);padding-top:12px}.history-item{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #f1f5f9;font-size:14px}
-    .note{font-size:12px;color:var(--muted);margin-top:10px;line-height:1.7}.install{font-size:13px;color:var(--muted);margin:8px 0 14px}
-    @media(max-width:560px){.title{font-size:24px}.summary{grid-template-columns:repeat(3,1fr)}.stat{padding:10px 5px}.stat b{font-size:18px}.grid{grid-template-columns:1fr}.field.full{grid-column:auto}.toolbar{grid-template-columns:1fr}.toolbar .btn{width:100%}}
+    :root{
+      --bg:#f5f7fb;--surface:#fff;--surface2:#f8fafc;--text:#0f172a;--muted:#64748b;--line:#e2e8f0;
+      --brand:#0f766e;--brand2:#115e59;--brandSoft:#ccfbf1;--danger:#b91c1c;--dangerSoft:#fee2e2;
+      --warn:#b45309;--warnSoft:#ffedd5;--ok:#15803d;--okSoft:#dcfce7;--blue:#1d4ed8;--blueSoft:#dbeafe;
+      --shadow:0 10px 35px rgba(15,23,42,.07);--radius:20px
+    }
+    body.dark{
+      --bg:#0b1220;--surface:#111827;--surface2:#172033;--text:#f8fafc;--muted:#94a3b8;--line:#263244;
+      --brandSoft:#123d3a;--dangerSoft:#3d171a;--warnSoft:#3a2815;--okSoft:#143421;--blueSoft:#172d55;
+      --shadow:0 12px 40px rgba(0,0,0,.22)
+    }
+    *{box-sizing:border-box} html{scroll-behavior:smooth}
+    body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Tahoma,Arial,sans-serif;background:var(--bg);color:var(--text);transition:.2s background,.2s color}
+    button,input,select,textarea{font:inherit}.app{max-width:980px;margin:0 auto;min-height:100vh;padding:calc(16px + env(safe-area-inset-top)) 14px calc(92px + env(safe-area-inset-bottom))}
+    header{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px}.title{font-size:30px;font-weight:900;letter-spacing:-.4px}.sub{font-size:13px;color:var(--muted);margin-top:3px}
+    .head-actions{display:flex;gap:8px;align-items:center}.icon-btn{width:44px;height:44px;border:1px solid var(--line);background:var(--surface);color:var(--text);border-radius:14px;display:grid;place-items:center;cursor:pointer;box-shadow:var(--shadow)}
+    .pushbar{background:linear-gradient(135deg,var(--brandSoft),var(--surface));border:1px solid color-mix(in srgb,var(--brand) 20%,var(--line));border-radius:18px;padding:12px 14px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;gap:10px}.pushbar .small{font-size:12px;color:var(--muted);margin-top:3px}
+    .btn{border:0;border-radius:14px;padding:11px 14px;cursor:pointer;transition:.15s transform,.15s opacity}.btn:active{transform:scale(.98)}.btn-primary{background:var(--brand);color:#fff;font-weight:800}.btn-primary:hover{background:var(--brand2)}.btn-ghost{background:var(--surface2);color:var(--text);border:1px solid var(--line)}.btn-danger{background:var(--dangerSoft);color:var(--danger)}.btn-blue{background:var(--blueSoft);color:var(--blue)}
+    .money-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-bottom:12px}.money-card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:13px;box-shadow:var(--shadow)}.money-card .label{font-size:12px;color:var(--muted);margin-bottom:5px}.money-card b{font-size:20px}.money-card small{display:block;color:var(--muted);margin-top:3px;font-size:11px}
+    .progress{height:7px;background:var(--surface2);border-radius:999px;overflow:hidden;margin-top:8px}.progress>i{display:block;height:100%;background:var(--brand);border-radius:999px}
+    .summary{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}.stat{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:11px;text-align:center}.stat b{display:block;font-size:21px}.stat span{font-size:11px;color:var(--muted)}
+    .tools{display:grid;grid-template-columns:1fr auto;gap:9px;margin-bottom:9px}.search,.select{width:100%;border:1px solid var(--line);border-radius:14px;background:var(--surface);color:var(--text);padding:12px 13px;font-size:15px;outline:none}.search:focus,.select:focus,input:focus,select:focus,textarea:focus{border-color:#5eead4!important;box-shadow:0 0 0 3px color-mix(in srgb,#5eead4 24%,transparent)}
+    .filters{display:flex;gap:7px;overflow:auto;padding:2px 0 10px;scrollbar-width:none}.filters::-webkit-scrollbar{display:none}.chip{border:1px solid var(--line);background:var(--surface);color:var(--muted);padding:8px 12px;border-radius:999px;white-space:nowrap;cursor:pointer;font-size:13px;font-weight:700}.chip.active{background:var(--brand);border-color:var(--brand);color:#fff}
+    .list{display:grid;gap:10px}.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:14px;box-shadow:var(--shadow)}.row{display:flex;align-items:center;justify-content:space-between;gap:10px}.student-main{display:flex;align-items:center;gap:11px}.avatar{width:45px;height:45px;border-radius:15px;display:grid;place-items:center;background:var(--brandSoft);color:var(--brand);font-weight:900;font-size:18px}.student-name{font-weight:900;font-size:18px}.amount{font-weight:800;margin-top:2px}.meta{margin-top:10px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;color:var(--muted);font-size:13px}.meta-box{background:var(--surface2);border-radius:12px;padding:9px}.meta-box b{display:block;color:var(--text);margin-top:2px}
+    .status{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:900;border-radius:999px;padding:7px 9px;white-space:nowrap}.status.ok{background:var(--okSoft);color:var(--ok)}.status.warn{background:var(--warnSoft);color:var(--warn)}.status.danger{background:var(--dangerSoft);color:var(--danger)}.status.blue{background:var(--blueSoft);color:var(--blue)}
+    .actions{display:flex;gap:7px;margin-top:11px;flex-wrap:wrap}.actions .btn{padding:9px 11px;border-radius:11px;font-size:13px}.actions .grow{flex:1}.empty{background:var(--surface);border:1px dashed #94a3b8;border-radius:20px;padding:38px 18px;text-align:center;color:var(--muted)}
+    .fab{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(16px + env(safe-area-inset-bottom));width:min(950px,calc(100% - 28px));display:flex;gap:8px;z-index:5}.fab .btn{flex:1;box-shadow:0 10px 28px rgba(15,118,110,.24)}
+    dialog{border:0;border-radius:23px;padding:0;width:min(600px,calc(100% - 24px));background:var(--surface);color:var(--text);box-shadow:0 28px 80px rgba(0,0,0,.28)}dialog::backdrop{background:rgba(15,23,42,.52)}.modal{padding:18px}.modal h2{margin:0 0 14px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.field{display:grid;gap:6px}.field.full{grid-column:1/-1}.field label{font-size:12px;color:var(--muted);font-weight:800}.field input,.field select,.field textarea{border:1px solid var(--line);border-radius:12px;padding:12px;font-size:15px;width:100%;background:var(--surface);color:var(--text)}.field textarea{min-height:84px;resize:vertical}.modal-actions{display:flex;gap:8px;justify-content:flex-start;margin-top:15px;flex-wrap:wrap}.note{font-size:12px;color:var(--muted);margin-top:9px;line-height:1.7}
+    .detail-hero{background:linear-gradient(135deg,var(--brand),#0d9488);color:#fff;border-radius:18px;padding:16px;margin:-2px 0 12px}.detail-hero .big{font-size:23px;font-weight:900}.detail-hero .muted{opacity:.82;font-size:12px;margin-top:4px}.detail-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.detail-box{background:var(--surface2);border:1px solid var(--line);border-radius:14px;padding:11px}.detail-box span{font-size:11px;color:var(--muted)}.detail-box b{display:block;margin-top:3px}
+    .history{margin-top:14px;border-top:1px solid var(--line);padding-top:12px}.history-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}.history-item{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--line);font-size:13px;gap:8px}.history-item .del{border:0;background:transparent;color:var(--danger);cursor:pointer;font-size:16px}
+    .settings-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 0;border-bottom:1px solid var(--line)}.settings-row:last-child{border-bottom:0}.switch{position:relative;width:48px;height:28px}.switch input{display:none}.slider{position:absolute;inset:0;background:#cbd5e1;border-radius:999px;cursor:pointer}.slider:before{content:"";position:absolute;width:22px;height:22px;right:3px;top:3px;background:#fff;border-radius:50%;transition:.2s}.switch input:checked+.slider{background:var(--brand)}.switch input:checked+.slider:before{transform:translateX(-20px)}
+    .toast{position:fixed;left:50%;transform:translateX(-50%) translateY(20px);bottom:calc(82px + env(safe-area-inset-bottom));background:#111827;color:#fff;padding:10px 14px;border-radius:12px;font-size:13px;opacity:0;pointer-events:none;transition:.2s;z-index:20}.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+    @media(max-width:700px){.title{font-size:25px}.money-grid{grid-template-columns:repeat(2,1fr)}.summary{grid-template-columns:repeat(4,1fr)}.stat{padding:9px 4px}.stat b{font-size:18px}.tools{grid-template-columns:1fr}.meta{grid-template-columns:1fr 1fr}.grid{grid-template-columns:1fr}.field.full{grid-column:auto}.pushbar{align-items:flex-start;flex-direction:column}.pushbar .btn{width:100%}}
+    @media(max-width:430px){.summary{grid-template-columns:repeat(2,1fr)}.meta{grid-template-columns:1fr}.head-actions .icon-btn{width:40px;height:40px}.title{font-size:24px}.money-card b{font-size:18px}}
   </style>
 </head>
 <body>
 <div class="app">
   <header>
-    <div><div class="title">دفعات الطلاب</div><div class="sub">متابعة الاستحقاقات الشهرية بسهولة</div></div>
-    <button class="btn btn-ghost" id="notifyBtn">🔔 تفعيل تنبيهات الخلفية</button>
+    <div><div class="title">دفعات الطلاب</div><div class="sub">إدارة الدفعات والاستحقاقات والتنبيهات</div></div>
+    <div class="head-actions"><button class="icon-btn" id="themeBtn" title="الوضع الداكن">◐</button><button class="icon-btn" id="settingsBtn" title="الإعدادات">⚙️</button></div>
   </header>
 
-  <div class="install">على iPhone: افتح الموقع في Safari ← مشاركة ← <b>إضافة إلى الشاشة الرئيسية</b>، ثم افتحه من الأيقونة واضغط <b>تفعيل تنبيهات الخلفية</b>.</div>
-  <div class="install" id="pushStatus">حالة التنبيهات: غير مفعّلة</div>
+  <div class="pushbar">
+    <div><b>🔔 التنبيهات الخلفية</b><div class="small" id="pushStatus">جارٍ التحقق من حالة التنبيهات...</div></div>
+    <button class="btn btn-primary" id="notifyBtn">تفعيل التنبيهات</button>
+  </div>
+
+  <div class="money-grid">
+    <div class="money-card"><div class="label">المتوقع هذا الشهر</div><b id="expectedMoney">0 د.ع</b><small>إجمالي الاشتراكات الشهرية</small></div>
+    <div class="money-card"><div class="label">المحصّل هذا الشهر</div><b id="collectedMoney">0 د.ع</b><small id="collectionPct">0% من المتوقع</small><div class="progress"><i id="collectionBar" style="width:0%"></i></div></div>
+    <div class="money-card"><div class="label">المتبقي</div><b id="remainingMoney">0 د.ع</b><small>حسب الدفعات المسجلة</small></div>
+    <div class="money-card"><div class="label">عدد دفعات الشهر</div><b id="monthPayments">0</b><small>عمليات دفع مسجلة</small></div>
+  </div>
 
   <div class="summary">
     <div class="stat"><b id="countAll">0</b><span>الطلاب</span></div>
-    <div class="stat"><b id="countSoon">0</b><span>قريب/اليوم</span></div>
     <div class="stat"><b id="countLate">0</b><span>متأخرون</span></div>
+    <div class="stat"><b id="countToday">0</b><span>مستحق اليوم</span></div>
+    <div class="stat"><b id="countSoon">0</b><span>خلال 3 أيام</span></div>
   </div>
 
-  <div class="toolbar">
-    <input class="search" id="search" placeholder="بحث عن طالب..." />
-    <button class="btn btn-ghost" id="exportBtn">نسخة احتياطية</button>
+  <div class="tools">
+    <input class="search" id="search" placeholder="بحث بالاسم أو رقم الهاتف..." />
+    <select class="select" id="sort"><option value="due">ترتيب حسب الاستحقاق</option><option value="name">الاسم</option><option value="amountDesc">المبلغ: الأعلى</option><option value="amountAsc">المبلغ: الأقل</option></select>
+  </div>
+  <div class="filters" id="filters">
+    <button class="chip active" data-filter="all">الكل</button><button class="chip" data-filter="late">متأخرون</button><button class="chip" data-filter="today">اليوم</button><button class="chip" data-filter="soon">قريب</button><button class="chip" data-filter="paidMonth">دفعوا هذا الشهر</button>
   </div>
 
   <div id="list" class="list"></div>
-
   <div class="fab"><button class="btn btn-primary" id="addBtn">＋ إضافة طالب</button></div>
 </div>
 
-<dialog id="studentDialog">
-  <form method="dialog" class="modal" id="studentForm">
-    <h2 id="formTitle">إضافة طالب</h2>
-    <div class="grid">
-      <div class="field full"><label>اسم الطالب</label><input id="name" required autocomplete="off" /></div>
-      <div class="field"><label>المبلغ الشهري (د.ع)</label><input id="amount" type="number" min="0" step="1" required /></div>
-      <div class="field"><label>تاريخ آخر دفعة</label><input id="paymentDate" type="date" required /></div>
-      <div class="field full"><label>موعد التنبيه</label><select id="reminder"><option value="0">يوم الاستحقاق</option><option value="1">قبل يوم</option><option value="3">قبل 3 أيام</option></select></div>
-    </div>
-    <div class="modal-actions"><button class="btn btn-primary" value="default" id="saveBtn">حفظ</button><button class="btn btn-ghost" value="cancel">إلغاء</button></div>
-    <div class="note">يتم حساب موعد الدفعة التالية بعد شهر تقويمي كامل من تاريخ آخر دفعة.</div>
-  </form>
-</dialog>
-
-<dialog id="payDialog">
-  <form method="dialog" class="modal" id="payForm">
-    <h2>تسجيل دفعة</h2>
-    <div class="grid">
-      <div class="field full"><label>تاريخ الدفع</label><input id="newPaymentDate" type="date" required /></div>
-      <div class="field full"><label>المبلغ</label><input id="newPaymentAmount" type="number" min="0" step="1" required /></div>
-    </div>
-    <div class="modal-actions"><button class="btn btn-primary" value="default">تسجيل</button><button class="btn btn-ghost" value="cancel">إلغاء</button></div>
-  </form>
-</dialog>
-
-<dialog id="detailDialog">
-  <div class="modal">
-    <h2 id="detailName"></h2>
-    <div id="detailBody"></div>
-    <div class="history"><b>سجل الدفعات</b><div id="historyList"></div></div>
-    <div class="modal-actions"><button class="btn btn-ghost" onclick="detailDialog.close()">إغلاق</button></div>
+<dialog id="studentDialog"><form method="dialog" class="modal" id="studentForm">
+  <h2 id="formTitle">إضافة طالب</h2>
+  <div class="grid">
+    <div class="field full"><label>اسم الطالب</label><input id="name" required autocomplete="off" /></div>
+    <div class="field"><label>المبلغ الشهري (د.ع)</label><input id="amount" type="number" min="0" step="1" required /></div>
+    <div class="field"><label>تاريخ آخر دفعة</label><input id="paymentDate" type="date" required /></div>
+    <div class="field"><label>رقم الهاتف (اختياري)</label><input id="phone" inputmode="tel" placeholder="07xxxxxxxxx" /></div>
+    <div class="field"><label>موعد التنبيه</label><select id="reminder"><option value="0">يوم الاستحقاق</option><option value="1">قبل يوم</option><option value="3">قبل 3 أيام</option></select></div>
+    <div class="field full"><label>ملاحظات (اختياري)</label><textarea id="notes" placeholder="مثلاً: مجموعة السبت، ملاحظة خاصة..."></textarea></div>
   </div>
-</dialog>
+  <div class="modal-actions"><button class="btn btn-primary" value="default">حفظ</button><button class="btn btn-ghost" value="cancel">إلغاء</button></div>
+  <div class="note">يتم حساب موعد الدفعة التالية بعد شهر تقويمي كامل من تاريخ آخر دفعة.</div>
+</form></dialog>
+
+<dialog id="payDialog"><form method="dialog" class="modal" id="payForm">
+  <h2>تسجيل دفعة جديدة</h2><div class="grid"><div class="field"><label>تاريخ الدفع</label><input id="newPaymentDate" type="date" required /></div><div class="field"><label>المبلغ المدفوع</label><input id="newPaymentAmount" type="number" min="0" step="1" required /></div></div>
+  <div class="modal-actions"><button class="btn btn-primary" value="default">تسجيل الدفعة</button><button class="btn btn-ghost" value="cancel">إلغاء</button></div>
+</form></dialog>
+
+<dialog id="detailDialog"><div class="modal">
+  <div class="detail-hero"><div class="big" id="detailName"></div><div class="muted" id="detailSub"></div></div>
+  <div id="detailBody"></div>
+  <div class="modal-actions" id="detailActions"></div>
+  <div class="history"><div class="history-head"><b>سجل الدفعات</b><span class="note" id="historyCount"></span></div><div id="historyList"></div></div>
+  <div class="modal-actions"><button class="btn btn-ghost" onclick="detailDialog.close()">إغلاق</button></div>
+</div></dialog>
+
+<dialog id="settingsDialog"><div class="modal">
+  <h2>الإعدادات والبيانات</h2>
+  <div class="settings-row"><div><b>الوضع الداكن</b><div class="note">تغيير مظهر التطبيق</div></div><label class="switch"><input id="darkToggle" type="checkbox"><span class="slider"></span></label></div>
+  <div class="settings-row"><div><b>نسخة احتياطية</b><div class="note">حفظ جميع الطلاب والدفعات في ملف JSON</div></div><button class="btn btn-ghost" id="exportBtn">تصدير</button></div>
+  <div class="settings-row"><div><b>استعادة نسخة</b><div class="note">استيراد نسخة احتياطية سابقة</div></div><button class="btn btn-ghost" id="importBtn">استيراد</button></div>
+  <div class="settings-row"><div><b>تصدير CSV</b><div class="note">ملف مناسب لـ Excel</div></div><button class="btn btn-ghost" id="csvBtn">CSV</button></div>
+  <div class="modal-actions"><button class="btn btn-ghost" onclick="settingsDialog.close()">إغلاق</button></div>
+</div></dialog>
 
 <input id="importFile" type="file" accept="application/json" hidden />
+<div class="toast" id="toast"></div>
 
 <script>
-const KEY='studentPayments.v1';
-let students=load(); let editId=null; let payId=null;
-const $=id=>document.getElementById(id);
-const list=$('list'), search=$('search');
-
+const KEY='studentPayments.v1', THEME_KEY='studentPayments.theme';
+let students=load(), editId=null, payId=null, activeFilter='all', detailId=null;
+const $=id=>document.getElementById(id), list=$('list'), search=$('search');
 function load(){try{return JSON.parse(localStorage.getItem(KEY))||[]}catch{return []}}
-function save(){localStorage.setItem(KEY,JSON.stringify(students)); render(); checkDueNotifications();}
+function persist(){localStorage.setItem(KEY,JSON.stringify(students))}
+function save(){persist();render();checkDueNotifications()}
 function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2)}
-function parseDate(s){const [y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d)}
+function parseDate(s){if(!s)return new Date(NaN);const [y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d)}
 function toISO(d){const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),day=String(d.getDate()).padStart(2,'0');return `${y}-${m}-${day}`}
-function addMonth(dateStr){const d=parseDate(dateStr);const day=d.getDate();const target=new Date(d.getFullYear(),d.getMonth()+1,1);const last=new Date(target.getFullYear(),target.getMonth()+1,0).getDate();target.setDate(Math.min(day,last));return toISO(target)}
-function formatDate(s){if(!s)return '-';const d=parseDate(s);return new Intl.DateTimeFormat('ar-IQ',{day:'2-digit',month:'2-digit',year:'numeric'}).format(d)}
+function addMonth(dateStr){const d=parseDate(dateStr),day=d.getDate(),target=new Date(d.getFullYear(),d.getMonth()+1,1),last=new Date(target.getFullYear(),target.getMonth()+1,0).getDate();target.setDate(Math.min(day,last));return toISO(target)}
+function formatDate(s){if(!s)return '-';return new Intl.DateTimeFormat('ar-IQ',{day:'2-digit',month:'2-digit',year:'numeric'}).format(parseDate(s))}
 function formatAmount(n){return new Intl.NumberFormat('ar-IQ',{maximumFractionDigits:0}).format(Number(n)||0)}
 function daysFromToday(dateStr){const a=new Date();a.setHours(0,0,0,0);const b=parseDate(dateStr);b.setHours(0,0,0,0);return Math.round((b-a)/86400000)}
-function statusFor(s){const n=daysFromToday(addMonth(s.paymentDate));if(n<0)return {cls:'danger',txt:`متأخر ${Math.abs(n)} يوم`};if(n===0)return {cls:'warn',txt:'موعد الدفع اليوم'};if(n<=3)return {cls:'warn',txt:`متبقي ${n} يوم`};return {cls:'ok',txt:`متبقي ${n} يوم`}}
-function esc(s){return String(s).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
-
+function statusFor(s){const n=daysFromToday(addMonth(s.paymentDate));if(n<0)return {cls:'danger',txt:`متأخر ${Math.abs(n)} يوم`};if(n===0)return {cls:'warn',txt:'مستحق اليوم'};if(n<=3)return {cls:'warn',txt:`متبقي ${n} يوم`};return {cls:'ok',txt:`متبقي ${n} يوم`}}
+function esc(s){return String(s??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
+function initials(name){const p=String(name).trim().split(/\s+/).filter(Boolean);return (p[0]?.[0]||'ط')+(p[1]?.[0]||'')}
+function isCurrentMonth(dateStr){const d=parseDate(dateStr),n=new Date();return d.getFullYear()===n.getFullYear()&&d.getMonth()===n.getMonth()}
+function paidThisMonth(s){return (s.payments||[]).some(p=>isCurrentMonth(p.date))}
+function toast(msg){const t=$('toast');t.textContent=msg;t.classList.add('show');clearTimeout(toast._t);toast._t=setTimeout(()=>t.classList.remove('show'),2200)}
+function normalizePhone(p){let x=String(p||'').replace(/\D/g,'');if(x.startsWith('0'))x='964'+x.slice(1);return x}
+function reminderText(s){return `السلام عليكم، تذكير بموعد الدفعة الشهرية للطالب ${s.name}. المبلغ ${formatAmount(s.amount)} د.ع، وموعد الاستحقاق ${formatDate(addMonth(s.paymentDate))}.`}
+function monthStats(){const expected=students.reduce((a,s)=>a+(Number(s.amount)||0),0);let collected=0,count=0;for(const s of students)for(const p of(s.payments||[])){if(isCurrentMonth(p.date)){collected+=Number(p.amount)||0;count++}}return {expected,collected,remaining:Math.max(expected-collected,0),count,pct:expected?Math.min(100,Math.round(collected/expected*100)):0}}
 function render(){
- const q=search.value.trim().toLowerCase(); const arr=students.filter(s=>s.name.toLowerCase().includes(q)).sort((a,b)=>parseDate(addMonth(a.paymentDate))-parseDate(addMonth(b.paymentDate)));
- $('countAll').textContent=students.length; $('countLate').textContent=students.filter(s=>daysFromToday(addMonth(s.paymentDate))<0).length; $('countSoon').textContent=students.filter(s=>{const d=daysFromToday(addMonth(s.paymentDate));return d>=0&&d<=3}).length;
- if(!arr.length){list.innerHTML='<div class="empty">لا توجد بيانات بعد. اضغط «إضافة طالب» للبدء.</div>';return}
- list.innerHTML=arr.map(s=>{const st=statusFor(s);return `<div class="card"><div class="row"><div><div class="student-name">${esc(s.name)}</div><div class="amount">${formatAmount(s.amount)} د.ع</div></div><span class="status ${st.cls}">${st.txt}</span></div><div class="meta"><div>آخر دفعة: <b>${formatDate(s.paymentDate)}</b></div><div>الدفعة القادمة: <b>${formatDate(addMonth(s.paymentDate))}</b></div></div><div class="actions"><button class="btn btn-primary" onclick="openPay('${s.id}')">تسجيل دفعة</button><button class="btn btn-ghost" onclick="openDetail('${s.id}')">التفاصيل</button><button class="btn btn-ghost" onclick="editStudent('${s.id}')">تعديل</button><button class="btn btn-danger" onclick="removeStudent('${s.id}')">حذف</button></div></div>`}).join('')
+  const q=search.value.trim().toLowerCase();let arr=students.filter(s=>`${s.name} ${s.phone||''}`.toLowerCase().includes(q));
+  arr=arr.filter(s=>{const d=daysFromToday(addMonth(s.paymentDate));if(activeFilter==='late')return d<0;if(activeFilter==='today')return d===0;if(activeFilter==='soon')return d>0&&d<=3;if(activeFilter==='paidMonth')return paidThisMonth(s);return true});
+  const sort=$('sort').value;arr.sort((a,b)=>sort==='name'?a.name.localeCompare(b.name,'ar'):sort==='amountDesc'?b.amount-a.amount:sort==='amountAsc'?a.amount-b.amount:parseDate(addMonth(a.paymentDate))-parseDate(addMonth(b.paymentDate)));
+  $('countAll').textContent=students.length;$('countLate').textContent=students.filter(s=>daysFromToday(addMonth(s.paymentDate))<0).length;$('countToday').textContent=students.filter(s=>daysFromToday(addMonth(s.paymentDate))===0).length;$('countSoon').textContent=students.filter(s=>{const d=daysFromToday(addMonth(s.paymentDate));return d>0&&d<=3}).length;
+  const ms=monthStats();$('expectedMoney').textContent=formatAmount(ms.expected)+' د.ع';$('collectedMoney').textContent=formatAmount(ms.collected)+' د.ع';$('remainingMoney').textContent=formatAmount(ms.remaining)+' د.ع';$('monthPayments').textContent=ms.count;$('collectionPct').textContent=`${ms.pct}% من المتوقع`;$('collectionBar').style.width=ms.pct+'%';
+  if(!arr.length){list.innerHTML='<div class="empty">لا توجد نتائج في هذا القسم.</div>';return}
+  list.innerHTML=arr.map(s=>{const st=statusFor(s),phone=s.phone?`<div class="meta-box">الهاتف<b>${esc(s.phone)}</b></div>`:'';return `<div class="card"><div class="row"><div class="student-main"><div class="avatar">${esc(initials(s.name))}</div><div><div class="student-name">${esc(s.name)}</div><div class="amount">${formatAmount(s.amount)} د.ع</div></div></div><span class="status ${st.cls}">${st.txt}</span></div><div class="meta"><div class="meta-box">آخر دفعة<b>${formatDate(s.paymentDate)}</b></div><div class="meta-box">الدفعة القادمة<b>${formatDate(addMonth(s.paymentDate))}</b></div>${phone}</div><div class="actions"><button class="btn btn-primary grow" onclick="openPay('${s.id}')">✓ تسجيل دفعة</button><button class="btn btn-ghost" onclick="openDetail('${s.id}')">التفاصيل</button>${s.phone?`<button class="btn btn-blue" onclick="openWhatsApp('${s.id}')">واتساب</button>`:''}<button class="btn btn-ghost" onclick="editStudent('${s.id}')">تعديل</button></div></div>`}).join('')
 }
-
-$('addBtn').onclick=()=>{editId=null;$('formTitle').textContent='إضافة طالب';$('name').value='';$('amount').value='';$('paymentDate').value=toISO(new Date());$('reminder').value='0';$('studentDialog').showModal()}
-$('studentForm').addEventListener('submit',e=>{if(e.submitter?.value==='cancel')return; e.preventDefault();const obj={name:$('name').value.trim(),amount:Number($('amount').value),paymentDate:$('paymentDate').value,reminderDays:Number($('reminder').value)};if(!obj.name||!obj.paymentDate)return;if(editId){const s=students.find(x=>x.id===editId);Object.assign(s,obj)}else{students.push({id:uid(),...obj,payments:[{date:obj.paymentDate,amount:obj.amount}]})} $('studentDialog').close();save(); const target=editId?students.find(x=>x.id===editId):students[students.length-1]; if(target) apiSchedule(target)})
-function editStudent(id){const s=students.find(x=>x.id===id);if(!s)return;editId=id;$('formTitle').textContent='تعديل الطالب';$('name').value=s.name;$('amount').value=s.amount;$('paymentDate').value=s.paymentDate;$('reminder').value=String(s.reminderDays??0);$('studentDialog').showModal()}
-function removeStudent(id){const s=students.find(x=>x.id===id);if(!s)return;if(confirm(`حذف ${s.name}؟`)){apiCancel(s);students=students.filter(x=>x.id!==id);save()}}
+$('filters').onclick=e=>{const b=e.target.closest('.chip');if(!b)return;document.querySelectorAll('.chip').forEach(x=>x.classList.remove('active'));b.classList.add('active');activeFilter=b.dataset.filter;render()};search.oninput=render;$('sort').onchange=render;
+$('addBtn').onclick=()=>{editId=null;$('formTitle').textContent='إضافة طالب';$('name').value='';$('amount').value='';$('paymentDate').value=toISO(new Date());$('phone').value='';$('notes').value='';$('reminder').value='0';$('studentDialog').showModal()}
+$('studentForm').addEventListener('submit',e=>{if(e.submitter?.value==='cancel')return;e.preventDefault();const obj={name:$('name').value.trim(),amount:Number($('amount').value),paymentDate:$('paymentDate').value,phone:$('phone').value.trim(),notes:$('notes').value.trim(),reminderDays:Number($('reminder').value)};if(!obj.name||!obj.paymentDate)return;let target;if(editId){target=students.find(x=>x.id===editId);Object.assign(target,obj)}else{target={id:uid(),...obj,payments:[{date:obj.paymentDate,amount:obj.amount}]};students.push(target)}$('studentDialog').close();save();apiSchedule(target);toast(editId?'تم تحديث بيانات الطالب':'تمت إضافة الطالب')})
+function editStudent(id){const s=students.find(x=>x.id===id);if(!s)return;editId=id;$('formTitle').textContent='تعديل الطالب';$('name').value=s.name;$('amount').value=s.amount;$('paymentDate').value=s.paymentDate;$('phone').value=s.phone||'';$('notes').value=s.notes||'';$('reminder').value=String(s.reminderDays??0);$('studentDialog').showModal()}
+function removeStudent(id){const s=students.find(x=>x.id===id);if(!s)return;if(confirm(`حذف ${s.name} وجميع سجلاته؟`)){apiCancel(s);students=students.filter(x=>x.id!==id);save();$('detailDialog').close();toast('تم حذف الطالب')}}
 function openPay(id){const s=students.find(x=>x.id===id);if(!s)return;payId=id;$('newPaymentDate').value=toISO(new Date());$('newPaymentAmount').value=s.amount;$('payDialog').showModal()}
-$('payForm').addEventListener('submit',e=>{if(e.submitter?.value==='cancel')return;e.preventDefault();const s=students.find(x=>x.id===payId);if(!s)return;const date=$('newPaymentDate').value,amount=Number($('newPaymentAmount').value);s.paymentDate=date;s.amount=amount||s.amount;s.payments=s.payments||[];s.payments.push({date,amount:s.amount});$('payDialog').close();save();apiSchedule(s)})
-function openDetail(id){const s=students.find(x=>x.id===id);if(!s)return;$('detailName').textContent=s.name;$('detailBody').innerHTML=`<div class="meta"><div>المبلغ الشهري: <b>${formatAmount(s.amount)} د.ع</b></div><div>آخر دفعة: <b>${formatDate(s.paymentDate)}</b></div><div>الدفعة القادمة: <b>${formatDate(addMonth(s.paymentDate))}</b></div><div>التنبيه: <b>${s.reminderDays===0?'يوم الاستحقاق':`قبل ${s.reminderDays} يوم`}</b></div></div>`;const ps=[...(s.payments||[])].sort((a,b)=>parseDate(b.date)-parseDate(a.date));$('historyList').innerHTML=ps.length?ps.map(p=>`<div class="history-item"><span>${formatDate(p.date)}</span><b>${formatAmount(p.amount)} د.ع</b></div>`).join(''):'<div class="note">لا يوجد سجل.</div>';$('detailDialog').showModal()}
-search.oninput=render;
+$('payForm').addEventListener('submit',e=>{if(e.submitter?.value==='cancel')return;e.preventDefault();const s=students.find(x=>x.id===payId);if(!s)return;const date=$('newPaymentDate').value,amount=Number($('newPaymentAmount').value);s.paymentDate=date;s.payments=s.payments||[];s.payments.push({id:uid(),date,amount:amount||s.amount});$('payDialog').close();save();apiSchedule(s);toast('تم تسجيل الدفعة')})
+function openDetail(id){const s=students.find(x=>x.id===id);if(!s)return;detailId=id;const st=statusFor(s);$('detailName').textContent=s.name;$('detailSub').textContent=s.phone||'ملف الطالب';$('detailBody').innerHTML=`<div class="detail-grid"><div class="detail-box"><span>المبلغ الشهري</span><b>${formatAmount(s.amount)} د.ع</b></div><div class="detail-box"><span>الحالة</span><b class="status ${st.cls}">${st.txt}</b></div><div class="detail-box"><span>آخر دفعة</span><b>${formatDate(s.paymentDate)}</b></div><div class="detail-box"><span>الاستحقاق القادم</span><b>${formatDate(addMonth(s.paymentDate))}</b></div><div class="detail-box"><span>التنبيه</span><b>${s.reminderDays===0?'يوم الاستحقاق':`قبل ${s.reminderDays} يوم`}</b></div><div class="detail-box"><span>دفعات مسجلة</span><b>${(s.payments||[]).length}</b></div></div>${s.notes?`<div class="note" style="margin-top:10px"><b>ملاحظات:</b> ${esc(s.notes)}</div>`:''}`;
+  $('detailActions').innerHTML=`<button class="btn btn-primary" onclick="detailDialog.close();openPay('${s.id}')">تسجيل دفعة</button>${s.phone?`<button class="btn btn-blue" onclick="openWhatsApp('${s.id}')">واتساب</button>`:''}<button class="btn btn-ghost" onclick="copyReminder('${s.id}')">نسخ رسالة تذكير</button><button class="btn btn-ghost" onclick="detailDialog.close();editStudent('${s.id}')">تعديل</button><button class="btn btn-danger" onclick="removeStudent('${s.id}')">حذف</button>`;
+  const ps=[...(s.payments||[])].sort((a,b)=>parseDate(b.date)-parseDate(a.date));$('historyCount').textContent=`${ps.length} دفعة`;$('historyList').innerHTML=ps.length?ps.map((p,i)=>`<div class="history-item"><span>${formatDate(p.date)}</span><b>${formatAmount(p.amount)} د.ع</b><button class="del" title="حذف الدفعة" onclick="deletePayment('${s.id}','${p.id||''}',${i})">×</button></div>`).join(''):'<div class="note">لا يوجد سجل.</div>';$('detailDialog').showModal()}
+function deletePayment(studentId,paymentId,sortedIndex){const s=students.find(x=>x.id===studentId);if(!s||!confirm('حذف هذه الدفعة من السجل؟'))return;let ps=[...(s.payments||[])].sort((a,b)=>parseDate(b.date)-parseDate(a.date));const target=paymentId?ps.find(p=>p.id===paymentId):ps[sortedIndex];s.payments=(s.payments||[]).filter(p=>p!==target);const remaining=[...(s.payments||[])].sort((a,b)=>parseDate(b.date)-parseDate(a.date));if(remaining[0])s.paymentDate=remaining[0].date;save();apiSchedule(s);openDetail(studentId)}
+function openWhatsApp(id){const s=students.find(x=>x.id===id);const p=normalizePhone(s?.phone);if(!p)return alert('لا يوجد رقم هاتف لهذا الطالب.');window.open(`https://wa.me/${p}?text=${encodeURIComponent(reminderText(s))}`,'_blank')}
+async function copyReminder(id){const s=students.find(x=>x.id===id);if(!s)return;try{await navigator.clipboard.writeText(reminderText(s));toast('تم نسخ رسالة التذكير')}catch{prompt('انسخ الرسالة:',reminderText(s))}}
 
-$('exportBtn').onclick=()=>{const blob=new Blob([JSON.stringify(students,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='student-payments-backup.json';a.click();URL.revokeObjectURL(a.href)}
-$('exportBtn').oncontextmenu=e=>{e.preventDefault();$('importFile').click()};
-$('importFile').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{const data=JSON.parse(await f.text());if(Array.isArray(data)&&confirm('استبدال البيانات الحالية بالنسخة الاحتياطية؟')){students=data;save()}}catch{alert('الملف غير صالح')}}
+$('settingsBtn').onclick=()=>{$('darkToggle').checked=document.body.classList.contains('dark');$('settingsDialog').showModal()};$('themeBtn').onclick=toggleTheme;$('darkToggle').onchange=toggleTheme;
+function applyTheme(v){document.body.classList.toggle('dark',v==='dark');localStorage.setItem(THEME_KEY,v);$('darkToggle').checked=v==='dark'}function toggleTheme(){applyTheme(document.body.classList.contains('dark')?'light':'dark')}applyTheme(localStorage.getItem(THEME_KEY)||'light');
+$('exportBtn').onclick=()=>{const blob=new Blob([JSON.stringify(students,null,2)],{type:'application/json'});downloadBlob(blob,'student-payments-backup.json');toast('تم إنشاء النسخة الاحتياطية')};$('importBtn').onclick=()=>$('importFile').click();$('importFile').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{const data=JSON.parse(await f.text());if(Array.isArray(data)&&confirm('استبدال البيانات الحالية بالنسخة الاحتياطية؟')){students=data;save();toast('تمت استعادة النسخة الاحتياطية')}}catch{alert('الملف غير صالح')}};
+$('csvBtn').onclick=()=>{const rows=[['الاسم','الهاتف','المبلغ الشهري','آخر دفعة','الدفعة القادمة','الحالة','ملاحظات']];for(const s of students)rows.push([s.name,s.phone||'',s.amount,s.paymentDate,addMonth(s.paymentDate),statusFor(s).txt,s.notes||'']);const csv='\ufeff'+rows.map(r=>r.map(x=>'"'+String(x).replace(/"/g,'""')+'"').join(',')).join('\n');downloadBlob(new Blob([csv],{type:'text/csv;charset=utf-8'}),'student-payments.csv');toast('تم تصدير CSV')};
+function downloadBlob(blob,name){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),500)}
 
 // ===== OneSignal + background push =====
-const PUSH_USER_KEY='studentPayments.pushExternalId';
-let OneSignalRef=null;
-let pushConfigured=false;
-
-function pushExternalId(){
-  let id=localStorage.getItem(PUSH_USER_KEY);
-  if(!id){ id='sp-'+uid()+'-'+uid(); localStorage.setItem(PUSH_USER_KEY,id); }
-  return id;
-}
-
-function reminderSendDate(student){
-  const due=addMonth(student.paymentDate);
-  const d=parseDate(due);
-  d.setDate(d.getDate()-(student.reminderDays||0));
-  d.setHours(9,0,0,0);
-  return d;
-}
-
-async function apiSchedule(student){
-  if(!pushConfigured || !OneSignalRef) return;
-  const when=reminderSendDate(student);
-  if(when <= new Date()) return;
-  try{
-    if(student.pushNotificationId){
-      await fetch('/api/schedule',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({action:'cancel',notificationId:student.pushNotificationId})});
-    }
-    const res=await fetch('/api/schedule',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({
-      action:'schedule', externalId:pushExternalId(), studentId:student.id, studentName:student.name, amount:student.amount,
-      dueDate:addMonth(student.paymentDate), sendAfter:when.toISOString(), siteUrl:location.origin
-    })});
-    const data=await res.json();
-    if(res.ok && data.id){ student.pushNotificationId=data.id; localStorage.setItem(KEY,JSON.stringify(students)); }
-  }catch(e){ console.warn('push schedule failed',e); }
-}
-
-async function apiCancel(student){
-  if(!student?.pushNotificationId) return;
-  try{ await fetch('/api/schedule',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({action:'cancel',notificationId:student.pushNotificationId})}); }catch{}
-  delete student.pushNotificationId;
-}
-
-async function syncAllPushSchedules(){
-  for(const s of students) await apiSchedule(s);
-  $('pushStatus').textContent='حالة التنبيهات: مفعّلة، وتمت مزامنة مواعيد الطلاب';
-}
-
-async function initOneSignal(){
-  try{
-    const cfg=await fetch('/api/config').then(r=>r.json());
-    if(!cfg.appId) throw new Error('Missing OneSignal App ID');
-    window.OneSignalDeferred=window.OneSignalDeferred||[];
-    OneSignalDeferred.push(async function(OneSignal){
-      await OneSignal.init({appId:cfg.appId,serviceWorkerPath:'/OneSignalSDKWorker.js',serviceWorkerParam:{scope:'/'}});
-      await OneSignal.login(pushExternalId());
-      OneSignalRef=OneSignal; pushConfigured=true;
-      const allowed=OneSignal.Notifications.permission===true;
-      $('pushStatus').textContent=allowed?'حالة التنبيهات: مفعّلة':'حالة التنبيهات: جاهزة للتفعيل';
-      if(allowed) syncAllPushSchedules();
-    });
-  }catch(e){
-    $('pushStatus').textContent='حالة التنبيهات: تحتاج إعداد OneSignal/Netlify مرة واحدة';
-    console.warn(e);
-  }
-}
-
-$('notifyBtn').onclick=async()=>{
-  if(!OneSignalRef){ alert('التنبيهات الخلفية لم تُجهّز بعد. راجع إعداد OneSignal/Netlify.'); return; }
-  try{
-    await OneSignalRef.Notifications.requestPermission();
-    if(OneSignalRef.Notifications.permission){
-      await OneSignalRef.login(pushExternalId());
-      await syncAllPushSchedules();
-      alert('تم تفعيل التنبيهات. ستصلك الإشعارات حتى لو كان التطبيق مغلقًا.');
-    }else alert('لم يتم السماح بالتنبيهات.');
-  }catch(e){ alert('تعذر تفعيل التنبيهات: '+e.message); }
-};
-
-// Fallback foreground notifications for overdue items while app is open
-function checkDueNotifications(force=false){if(!('Notification'in window)||Notification.permission!=='granted')return;const today=toISO(new Date());const sentKey='studentPayments.sent.'+today;let sent=JSON.parse(localStorage.getItem(sentKey)||'[]');for(const s of students){const due=addMonth(s.paymentDate);const reminderDate=parseDate(due);reminderDate.setDate(reminderDate.getDate()-(s.reminderDays||0));const r=toISO(reminderDate);if((force||r===today||daysFromToday(due)<0)&&!sent.includes(s.id)){const late=daysFromToday(due)<0;new Notification(late?`دفعة متأخرة: ${s.name}`:`تذكير دفع: ${s.name}`,{body:`${formatAmount(s.amount)} د.ع — الاستحقاق ${formatDate(due)}`});sent.push(s.id)}}localStorage.setItem(sentKey,JSON.stringify(sent))}
+const PUSH_USER_KEY='studentPayments.pushExternalId';let OneSignalRef=null,pushConfigured=false;
+function pushExternalId(){let id=localStorage.getItem(PUSH_USER_KEY);if(!id){id='sp-'+uid()+'-'+uid();localStorage.setItem(PUSH_USER_KEY,id)}return id}
+function reminderSendDate(student){const due=addMonth(student.paymentDate),d=parseDate(due);d.setDate(d.getDate()-(student.reminderDays||0));d.setHours(9,0,0,0);return d}
+async function apiSchedule(student){if(!pushConfigured||!OneSignalRef)return;const when=reminderSendDate(student);if(student.pushNotificationId){try{await fetch('/api/schedule',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({action:'cancel',notificationId:student.pushNotificationId})})}catch{}delete student.pushNotificationId}if(when<=new Date())return;try{const res=await fetch('/api/schedule',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({action:'schedule',externalId:pushExternalId(),studentId:student.id,studentName:student.name,amount:student.amount,dueDate:addMonth(student.paymentDate),sendAfter:when.toISOString(),siteUrl:location.origin})});const data=await res.json();if(res.ok&&data.id){student.pushNotificationId=data.id;persist()}}catch(e){console.warn(e)}}
+async function apiCancel(student){if(!student?.pushNotificationId)return;try{await fetch('/api/schedule',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({action:'cancel',notificationId:student.pushNotificationId})})}catch{}delete student.pushNotificationId;persist()}
+async function syncAllPushSchedules(){for(const s of students)await apiSchedule(s);$('pushStatus').textContent='مفعّلة — تمت مزامنة مواعيد الطلاب';$('notifyBtn').textContent='التنبيهات مفعّلة ✓'}
+async function initOneSignal(){try{const cfg=await fetch('/api/config').then(r=>r.json());if(!cfg.appId)throw new Error('Missing App ID');window.OneSignalDeferred=window.OneSignalDeferred||[];OneSignalDeferred.push(async function(OneSignal){await OneSignal.init({appId:cfg.appId,serviceWorkerPath:'/OneSignalSDKWorker.js',serviceWorkerParam:{scope:'/'}});await OneSignal.login(pushExternalId());OneSignalRef=OneSignal;pushConfigured=true;const allowed=OneSignal.Notifications.permission===true;$('pushStatus').textContent=allowed?'مفعّلة وتعمل في الخلفية':'جاهزة للتفعيل';if(allowed)syncAllPushSchedules()})}catch(e){$('pushStatus').textContent='تحتاج مراجعة إعداد OneSignal/Netlify';console.warn(e)}}
+$('notifyBtn').onclick=async()=>{if(!OneSignalRef){alert('التنبيهات الخلفية لم تجهز بعد.');return}try{await OneSignalRef.Notifications.requestPermission();if(OneSignalRef.Notifications.permission){await OneSignalRef.login(pushExternalId());await syncAllPushSchedules();toast('تم تفعيل التنبيهات الخلفية')}else alert('لم يتم السماح بالتنبيهات.')}catch(e){alert('تعذر تفعيل التنبيهات: '+e.message)}};
+function checkDueNotifications(force=false){if(!('Notification'in window)||Notification.permission!=='granted')return;const today=toISO(new Date()),sentKey='studentPayments.sent.'+today;let sent=JSON.parse(localStorage.getItem(sentKey)||'[]');for(const s of students){const due=addMonth(s.paymentDate),reminderDate=parseDate(due);reminderDate.setDate(reminderDate.getDate()-(s.reminderDays||0));const r=toISO(reminderDate);if((force||r===today||daysFromToday(due)<0)&&!sent.includes(s.id)){const late=daysFromToday(due)<0;new Notification(late?`دفعة متأخرة: ${s.name}`:`تذكير دفع: ${s.name}`,{body:`${formatAmount(s.amount)} د.ع — الاستحقاق ${formatDate(due)}`});sent.push(s.id)}}localStorage.setItem(sentKey,JSON.stringify(sent))}
 
 render();checkDueNotifications();initOneSignal();
 </script>
-</body>
-</html>
+</body></html>
