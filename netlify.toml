@@ -1,0 +1,15 @@
+[build]
+  publish = "student_payments_final"
+
+[functions]
+  directory = "netlify/functions"
+
+[[redirects]]
+  from = "/api/config"
+  to = "/.netlify/functions/config"
+  status = 200
+
+[[redirects]]
+  from = "/api/schedule"
+  to = "/.netlify/functions/schedule"
+  status = 200
